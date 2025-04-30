@@ -12,7 +12,7 @@ export async function GET() {
   } catch (error: any) {
     console.error('リッチメニュー取得エラー:', error);
     return NextResponse.json(
-      { error: `リッチメニュー取得に失敗しました: ${error.message}` }, 
+      { error: `リッチメニュー取得に失敗しました: ${error.message}`, richMenus: [] }, 
       { status: 500 }
     );
   }

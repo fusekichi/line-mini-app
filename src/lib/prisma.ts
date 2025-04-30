@@ -1,98 +1,13 @@
-import { PrismaClient } from '@prisma/client'
+import { PrismaClient } from '@prisma/client';
 
-// ビルド時に使用するより堅牢なモックオブジェクト
-function createPrismaMock() {
-  return new Proxy(
-    {},
-    {
-      get: () => {
-        // メソッドチェーンでも呼び出しでも同じモックを返す
-        return createPrismaMock();
-      },
-    }
-  ) as unknown as PrismaClient;
+// グローバル変数の型拡張
+declare global {
+  var prisma: PrismaClient | undefined;
 }
 
-// PrismaClientインスタンス化関数
-function getPrismaClient() {
-  // ビルド時は堅牢なモックを返す
-  if (process.env.NODE_ENV === 'production' && process.env.NEXT_PHASE === 'phase-production-build') {
-    console.log('ビルド時はPrismaクライアントをモック化します');
-    return createPrismaMock();
-  }
-  
-  // 通常の場合はPrismaClientを返す
-  const globalForPrisma = global as unknown as { prisma: PrismaClient }
-  const prisma = globalForPrisma.prisma || new PrismaClient()
-  
-  if (process.env.NODE_ENV !== 'production') globalForPrisma.prisma = prisma
-  
-  return prisma
-}
+// 開発環境でホットリロード時に複数のPrismaインスタンスが作成されるのを防ぐ
+const prisma = global.prisma || new PrismaClient();
 
-export default getPrismaClient()
+if (process.env.NODE_ENV !== 'production') global.prisma = prisma;
 
-// import { PrismaClient } from '@prisma/client'
-
-// // PrismaClientインスタンス化関数
-// function getPrismaClient() {
-//   // ビルド時は空のモックを返す
-//   if (process.env.NODE_ENV === 'production' && process.env.NEXT_PHASE === 'phase-production-build') {
-//     console.log('ビルド時はPrismaクライアントをモック化します');
-//     // @ts-ignore
-//     return {}
-//   }
-  
-//   // 通常の場合はPrismaClientを返す
-//   const globalForPrisma = global as unknown as { prisma: PrismaClient }
-//   const prisma = globalForPrisma.prisma || new PrismaClient()
-  
-//   if (process.env.NODE_ENV !== 'production') globalForPrisma.prisma = prisma
-  
-//   return prisma
-// }
-
-// export default getPrismaClient()
-
-
-
-// import { PrismaClient } from '@prisma/client';
-
-// // グローバル変数の型拡張
-// declare global {
-//   var prisma: PrismaClient | undefined;
-// }
-
-// // 開発環境でホットリロード時に複数のPrismaインスタンスが作成されるのを防ぐ
-// const prisma = global.prisma || new PrismaClient();
-
-// if (process.env.NODE_ENV !== 'production') global.prisma = prisma;
-
-// export default prisma;
-
-
-
-
-// import { PrismaClient } from '@prisma/client'
-
-// const prisma = new PrismaClient()
-
-// export default prisma
-
-
-// @ts-nocheck
-// import { PrismaClient } from '../../prisma/generated/client';
-// import { PrismaClient } from '@prisma/client'
-
-// let prisma: PrismaClient;
-
-// if (process.env.NODE_ENV === 'production') {
-//   prisma = new PrismaClient();
-// } else {
-//   if (!global.prisma) {
-//     global.prisma = new PrismaClient();
-//   }
-//   prisma = global.prisma;
-// }
-
-// export default prisma;
+export default prisma;
