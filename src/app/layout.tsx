@@ -20,8 +20,9 @@ export default function RootLayout({
   return (
     <html lang="ja">
       <body className={inter.className}>
-        {/* @ts-expect-error Server Component */}
-        <LiffProvider liffId={liffId}></LiffProvider>
+        <LiffProvider liffId={liffId}>
+          {children}
+        </LiffProvider>
       </body>
     </html>
   );
