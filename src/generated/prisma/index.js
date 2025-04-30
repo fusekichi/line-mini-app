@@ -172,7 +172,7 @@ const config = {
     "isCustomOutput": true
   },
   "relativeEnvPaths": {
-    "rootEnvPath": "../../../.env",
+    "rootEnvPath": null,
     "schemaEnvPath": "../../../.env"
   },
   "relativePath": "../../../prisma",
@@ -182,17 +182,18 @@ const config = {
     "db"
   ],
   "activeProvider": "postgresql",
+  "postinstall": false,
   "inlineDatasources": {
     "db": {
       "url": {
         "fromEnvVar": "DATABASE_URL",
-        "value": "prisma+postgres://accelerate.prisma-data.net/?api_key=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhcGlfa2V5IjoiZWEyMWU1OWEtZDY1ZC00YmY0LWFhNmUtODQ5YzYzZmE2ZTAzIiwidGVuYW50X2lkIjoiMjU2YWFmMzljODc0MzJlZDFkM2ViMjI2NDRmYTY2ODcxMzUxZGMzYWM0MmE3ZDFmMTYwM2MwOWM1NDJiMDYwZSIsImludGVybmFsX3NlY3JldCI6IjFmZDYyYzgyLWUyMDYtNGM5ZC1hZWUxLWY2YjM0Mjk2MjgzMSJ9.juS_mWxEKORfWqBwbiHRSXUVQNuM2ygwqbMQkrWVuGs"
+        "value": null
       }
     }
   },
   "inlineSchema": "// This is your Prisma schema file,\n// learn more about it in the docs: https://pris.ly/d/prisma-schema\n\n// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?\n// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init\n\ngenerator client {\n  provider = \"prisma-client-js\"\n  output   = \"../src/generated/prisma\"\n}\n\ndatasource db {\n  provider = \"postgresql\"\n  url      = env(\"DATABASE_URL\")\n}\n\n// ユーザーモデル - LINEユーザー情報保存用\nmodel User {\n  id            String        @id @default(uuid())\n  lineUserId    String        @unique // LINE内部ユーザーID\n  displayName   String // 表示名\n  pictureUrl    String? // プロフィール画像URL (オプション)\n  statusMessage String? // ステータスメッセージ (オプション)\n  createdAt     DateTime      @default(now())\n  updatedAt     DateTime      @updatedAt\n  userRichMenu  UserRichMenu? // ユーザーに割り当てられたリッチメニュー\n}\n\n// リッチメニューモデル - 複数のリッチメニュー管理用\nmodel RichMenu {\n  id            String         @id @default(uuid())\n  name          String // 管理用の名前\n  richMenuId    String         @unique // LINEプラットフォームでのリッチメニューID \n  description   String? // リッチメニューの説明\n  imageUrl      String? // リッチメニュー画像URL\n  isDefault     Boolean        @default(false) // デフォルトメニューかどうか\n  createdAt     DateTime       @default(now())\n  updatedAt     DateTime       @updatedAt\n  userRichMenus UserRichMenu[] // このリッチメニューを使用しているユーザー\n}\n\n// ユーザーとリッチメニューの関連付け\nmodel UserRichMenu {\n  id         String   @id @default(uuid())\n  userId     String   @unique // ユーザーID (外部キー)\n  richMenuId String // リッチメニューID (外部キー)\n  createdAt  DateTime @default(now())\n  updatedAt  DateTime @updatedAt\n\n  // リレーション定義\n  user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)\n  richMenu RichMenu @relation(fields: [richMenuId], references: [id])\n}\n",
   "inlineSchemaHash": "0fa2d8843528180f068e4662a2c6a01b112d9cb17a4cc794d29836475d5dbcb1",
-  "copyEngine": false
+  "copyEngine": true
 }
 
 const fs = require('fs')
@@ -229,3 +230,9 @@ const PrismaClient = getPrismaClient(config)
 exports.PrismaClient = PrismaClient
 Object.assign(exports, Prisma)
 
+// file annotations for bundling tools to include these files
+path.join(__dirname, "libquery_engine-debian-openssl-3.0.x.so.node");
+path.join(process.cwd(), "src/generated/prisma/libquery_engine-debian-openssl-3.0.x.so.node")
+// file annotations for bundling tools to include these files
+path.join(__dirname, "schema.prisma");
+path.join(process.cwd(), "src/generated/prisma/schema.prisma")
