@@ -1,0 +1,53 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ユーザーモデル - LINEユーザー情報保存用
+model User {
+  id             String         @id @default(uuid())
+  lineUserId     String         @unique // LINE内部ユーザーID
+  displayName    String         // 表示名
+  pictureUrl     String?        // プロフィール画像URL (オプション)
+  statusMessage  String?        // ステータスメッセージ (オプション)
+  createdAt      DateTime       @default(now())
+  updatedAt      DateTime       @updatedAt
+  userRichMenu   UserRichMenu?  // ユーザーに割り当てられたリッチメニュー
+}
+
+// リッチメニューモデル - 複数のリッチメニュー管理用
+model RichMenu {
+  id           String         @id @default(uuid())
+  name         String         // 管理用の名前
+  richMenuId   String         @unique // LINEプラットフォームでのリッチメニューID 
+  description  String?        // リッチメニューの説明
+  imageUrl     String?        // リッチメニュー画像URL
+  isDefault    Boolean        @default(false) // デフォルトメニューかどうか
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
+  userRichMenus UserRichMenu[] // このリッチメニューを使用しているユーザー
+}
+
+// ユーザーとリッチメニューの関連付け
+model UserRichMenu {
+  id         String    @id @default(uuid())
+  userId     String    @unique // ユーザーID (外部キー)
+  richMenuId String    // リッチメニューID (外部キー)
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+  
+  // リレーション定義
+  user       User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  richMenu   RichMenu  @relation(fields: [richMenuId], references: [id])
+}
