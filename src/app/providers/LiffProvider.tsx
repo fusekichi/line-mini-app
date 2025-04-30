@@ -5,7 +5,13 @@ import liff from '@line/liff';
 type LiffContextType = {
   liff: typeof liff | null;
   isLoggedIn: boolean;
-  profile: any;
+  // profile: any;
+  profile: {
+    userId: string;
+    displayName: string;
+    pictureUrl?: string;
+    statusMessage?: string;
+  } | null;
   isLoading: boolean;
   error: Error | null;
 };
