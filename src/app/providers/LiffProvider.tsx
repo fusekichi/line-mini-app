@@ -44,9 +44,16 @@ export const LiffProvider = ({ children, liffId }: { children: ReactNode, liffId
           .then(() => {
             console.log("LIFF初期化完了");
             
-            const isLoggedIn = liff.isLoggedIn();
-            let profilePromise = Promise.resolve(null);
+            // const isLoggedIn = liff.isLoggedIn();
+            // let profilePromise = Promise.resolve(null);
             
+            // if (isLoggedIn) {
+            //   profilePromise = liff.getProfile();
+            // }
+
+            const isLoggedIn = liff.isLoggedIn();
+            let profilePromise: Promise<any | null> = Promise.resolve(null);
+                        
             if (isLoggedIn) {
               profilePromise = liff.getProfile();
             }
