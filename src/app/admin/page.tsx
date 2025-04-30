@@ -111,6 +111,9 @@ export default function AdminPage() {
     <div className="p-6 max-w-4xl mx-auto">
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold">リッチメニュー管理</h1>
+        <Link href="/admin/users" className="text-blue-500 hover:underline mr-4">
+          ユーザー管理
+        </Link>
         <Link href="/" className="text-blue-500 hover:underline">
           ホームに戻る
         </Link>
