@@ -96,10 +96,14 @@ export default function AdminPage() {
 
   // 入力変更ハンドラ - 型追加
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    const { name, value, type, checked } = e.target;
+    const target = e.target;
+    const value = target.type === 'checkbox' 
+      ? (target as HTMLInputElement).checked 
+      : target.value;
+    
     setFormData(prev => ({
       ...prev,
-      [name]: type === 'checkbox' ? checked : value
+      [target.name]: value
     }));
   };
 
