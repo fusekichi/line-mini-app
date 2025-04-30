@@ -4,7 +4,7 @@ const nextConfig: NextConfig = {
   /* config options here */
   eslint: {
     // 本番ビルド時のESLintチェックを無効化
-    ignoreDuringBuilds: true,
+    ignoreDuringBuilds: true
   }
 };
 
