@@ -6,6 +6,7 @@ export default function DebugPage() {
   const [richMenus, setRichMenus] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [tokenStatus, setTokenStatus] = useState<any>(null);
 
   const fetchRichMenus = async () => {
     setLoading(true);
@@ -21,6 +22,19 @@ export default function DebugPage() {
       } else {
         setRichMenus([]);
       }
+    } catch (error: any) {
+      setError(`エラー: ${error.message}`);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const checkToken = async () => {
+    setLoading(true);
+    try {
+      const response = await fetch('/api/debug/token');
+      const data = await response.json();
+      setTokenStatus(data);
     } catch (error: any) {
       setError(`エラー: ${error.message}`);
     } finally {
@@ -77,6 +91,35 @@ export default function DebugPage() {
           </div>
         )}
       </div>
+
+      <div className="bg-white p-6 rounded-lg shadow-md mb-6">
+        <h2 className="text-xl font-semibold mb-4">アクセストークン確認</h2>
+        <button
+            onClick={checkToken}
+            className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded"
+        >
+            アクセストークンを検証
+        </button>
+        
+        {tokenStatus && (
+            <div className="mt-4 p-4 border rounded">
+            <div className="font-semibold">検証結果:</div>
+            <div className={tokenStatus.success ? "text-green-600" : "text-red-600"}>
+                {tokenStatus.success ? "トークンは有効です" : "トークンに問題があります"}
+            </div>
+            <div className="mt-2 text-sm">
+                <div>ステータスコード: {tokenStatus.statusCode}</div>
+                <div>トークンプレビュー: {tokenStatus.tokenPreview}</div>
+                {tokenStatus.botInfo && (
+                <div className="mt-2">
+                    <div>Bot名: {tokenStatus.botInfo.displayName}</div>
+                    <div>ユーザーID: {tokenStatus.botInfo.userId}</div>
+                </div>
+                )}
+            </div>
+            </div>
+        )}
+        </div>
     </div>
   );
 }
