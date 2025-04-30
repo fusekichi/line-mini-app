@@ -2,16 +2,18 @@
 import { createContext, useContext, useEffect, useState, ReactNode } from 'react';
 import liff from '@line/liff';
 
+interface Profile {
+  userId: string;
+  displayName: string;
+  pictureUrl?: string;
+  statusMessage?: string;
+}
+
 type LiffContextType = {
   liff: typeof liff | null;
   isLoggedIn: boolean;
   // profile: any;
-  profile: {
-    userId: string;
-    displayName: string;
-    pictureUrl?: string;
-    statusMessage?: string;
-  } | null;
+  profile: Profile | null;
   isLoading: boolean;
   error: Error | null;
 };
@@ -52,7 +54,7 @@ export const LiffProvider = ({ children, liffId }: { children: ReactNode, liffId
             // }
 
             const isLoggedIn = liff.isLoggedIn();
-            let profilePromise: Promise<any | null> = Promise.resolve(null);
+            let profilePromise: Promise<Profile | null> = Promise.resolve(null);
                         
             if (isLoggedIn) {
               profilePromise = liff.getProfile();
