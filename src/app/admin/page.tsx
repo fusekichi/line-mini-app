@@ -1,9 +1,29 @@
 "use client";
 import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
+import Link from 'next/link';
+
+// 型定義
+interface RichMenu {
+  id: string;
+  name: string;
+  richMenuId: string;
+  description?: string;
+  imageUrl?: string;
+  isDefault: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
+
+interface FormData {
+  name: string;
+  richMenuId: string;
+  description: string;
+  imageUrl: string;
+  isDefault: boolean;
+}
 
 export default function AdminPage() {
-  const [richMenus, setRichMenus] = useState<any[]>([]);
+  const [richMenus, setRichMenus] = useState([]);
   const [loading, setLoading] = useState(true);
   const [formData, setFormData] = useState({
     name: '',
@@ -12,27 +32,11 @@ export default function AdminPage() {
     imageUrl: '',
     isDefault: false
   });
-  const router = useRouter();
 
-  // リッチメニュー一覧を取得
-  useEffect(() => {
-    fetch('/api/richmenu')
-      .then(res => res.json())
-      .then(data => {
-        if (data.richMenus) {
-          setRichMenus(data.richMenus);
-        }
-        setLoading(false);
-      })
-      .catch(err => {
-        console.error('リッチメニュー取得エラー:', err);
-        setLoading(false);
-      });
-  }, []);
-
-  // フォーム送信
-  const handleSubmit = async (e: React.FormEvent) => {
+  // フォーム送信ハンドラ
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true);
     
     try {
       const response = await fetch('/api/richmenu', {
@@ -46,8 +50,7 @@ export default function AdminPage() {
       const data = await response.json();
       
       if (data.success) {
-        alert('リッチメニューを登録しました！');
-        // フォームをリセット
+        alert('リッチメニューを登録しました');
         setFormData({
           name: '',
           richMenuId: '',
@@ -55,30 +58,61 @@ export default function AdminPage() {
           imageUrl: '',
           isDefault: false
         });
-        // リスト更新
-        setRichMenus(prev => [data.richMenu, ...prev]);
+        
+        // 最新のリストを取得
+        fetchRichMenus();
       } else {
-        alert(`エラー: ${data.error}`);
+        alert(`エラー: ${data.error || '不明なエラー'}`);
       }
     } catch (error) {
       console.error('送信エラー:', error);
       alert('通信エラーが発生しました');
     }
+    
+    setLoading(false);
   };
 
+  // リッチメニュー一覧取得
+  const fetchRichMenus = async () => {
+    setLoading(true);
+    try {
+      const response = await fetch('/api/richmenu');
+      const data = await response.json();
+      
+      if (data.richMenus) {
+        setRichMenus(data.richMenus);
+      }
+    } catch (error) {
+      console.error('リッチメニュー取得エラー:', error);
+      alert('リッチメニュー情報の取得に失敗しました');
+    }
+    setLoading(false);
+  };
+
+  // 初期ロード時にデータ取得
+  useEffect(() => {
+    fetchRichMenus();
+  }, []);
+
   // 入力変更ハンドラ
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    const { name, value, type } = e.target as HTMLInputElement;
+  const handleChange = (e) => {
+    const { name, value, type, checked } = e.target;
     setFormData(prev => ({
       ...prev,
-      [name]: type === 'checkbox' ? (e.target as HTMLInputElement).checked : value
+      [name]: type === 'checkbox' ? checked : value
     }));
   };
 
   return (
     <div className="p-6 max-w-4xl mx-auto">
-      <h1 className="text-2xl font-bold mb-6">リッチメニュー管理</h1>
+      <div className="flex justify-between items-center mb-6">
+        <h1 className="text-2xl font-bold">リッチメニュー管理</h1>
+        <Link href="/" className="text-blue-500 hover:underline">
+          ホームに戻る
+        </Link>
+      </div>
       
+      {/* リッチメニュー登録フォーム */}
       <div className="bg-white p-6 rounded-lg shadow-md mb-8">
         <h2 className="text-xl font-semibold mb-4">新規リッチメニュー登録</h2>
         
@@ -146,13 +180,15 @@ export default function AdminPage() {
           
           <button
             type="submit"
-            className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded"
+            disabled={loading}
+            className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded disabled:bg-gray-400"
           >
-            登録する
+            {loading ? '処理中...' : '登録する'}
           </button>
         </form>
       </div>
       
+      {/* リッチメニュー一覧 */}
       <div className="bg-white p-6 rounded-lg shadow-md">
         <h2 className="text-xl font-semibold mb-4">登録済みリッチメニュー</h2>
         
