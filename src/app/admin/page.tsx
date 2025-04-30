@@ -114,6 +114,9 @@ export default function AdminPage() {
         <Link href="/admin/users" className="text-blue-500 hover:underline mr-4">
           ユーザー管理
         </Link>
+        <Link href="/admin/debug" className="text-blue-500 hover:underline mr-4">
+          デバッグ
+        </Link>
         <Link href="/" className="text-blue-500 hover:underline">
           ホームに戻る
         </Link>
