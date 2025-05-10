@@ -1,0 +1,1272 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LITORITO | 大都会の中の小さなリトリート</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* リセットCSS */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            /* font-family: 'Noto Sans JP', sans-serif; */
+            font-family: "Zen Old Mincho", serif;
+            color: #333;
+            line-height: 1.7;
+            overflow-x: hidden;
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        img {
+            max-width: 100%;
+            vertical-align: bottom;
+        }
+
+        /* ヘッダー */
+        header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 100;
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            height: 30px;
+            /* position: relative;
+            bottom: 15px; */
+        }
+
+        .logo img {
+            height: 200%;
+        }
+
+        nav ul {
+            display: flex;
+            list-style: none;
+        }
+
+        nav ul li {
+            margin-left: 25px;
+        }
+
+        nav ul li a {
+            color: #fff;
+            font-size: 14px;
+            letter-spacing: 0.1em;
+            position: relative;
+            transition: 0.3s;
+        }
+
+        nav ul li a:after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 1px;
+            background: #fff;
+            transition: 0.3s;
+        }
+
+        nav ul li a:hover:after {
+            width: 100%;
+        }
+
+        /* ヒーローセクション */
+        .hero {
+            position: relative;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        .hero-image {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('https://cdn1.genspark.ai/user-upload-image/gpt_image_edited/0ce78251-28d1-4851-b017-9b4180386f21_wm');
+            background-size: cover;
+            background-position: center;
+        }
+
+        .hero-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.3);
+        }
+
+        .catch-copy-container {
+            position: absolute;
+            right: 10%;
+            top: 50%;
+            transform: translateY(-50%);
+            display: flex;
+            flex-direction: row-reverse;
+        }
+
+        .vertical-text {
+            writing-mode: vertical-rl;
+            text-orientation: upright;
+            color: #fff;
+            text-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+            font-size: 2.5rem;
+            line-height: 1.8;
+            letter-spacing: 0.1em;
+            font-weight: 300;
+        }
+
+        .sub-copy {
+            font-size: 1.2rem;
+            margin-right: 30px;
+            font-weight: 300;
+        }
+
+        .cta-button {
+            position: absolute;
+            bottom: 10%;
+            left: 50%;
+            transform: translateX(-50%);
+            text-align: center;
+        }
+
+        .reserve-btn {
+            background-color: #F7C600;
+            color: #333;
+            padding: 16px 32px;
+            border-radius: 4px;
+            font-weight: bold;
+            text-decoration: none;
+            display: inline-block;
+            transition: all 0.3s ease;
+            font-size: 16px;
+            letter-spacing: 0.1em;
+        }
+
+        .reserve-btn:hover {
+            background-color: #FFD700;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        /* コンテンツセクション共通 */
+        section {
+            padding: 80px 0;
+        }
+
+        .section-inner {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 0 30px;
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 28px;
+            margin-bottom: 50px;
+            position: relative;
+            font-weight: 300;
+        }
+
+        .section-title:after {
+            content: '';
+            position: absolute;
+            bottom: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 40px;
+            height: 1px;
+            background: #333;
+        }
+
+        /* 基本情報セクション */
+        .basic-info {
+            background: #fff;
+        }
+
+        .info-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+        }
+
+        .info-box {
+            width: 48%;
+            margin-bottom: 40px;
+        }
+
+        .info-heading {
+            font-size: 20px;
+            margin-bottom: 20px;
+            position: relative;
+            padding-left: 20px;
+            font-weight: 400;
+        }
+
+        .info-heading:before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 4px;
+            height: 20px;
+            background: #F7C600;
+        }
+
+        .price-list {
+            list-style: none;
+        }
+
+        .price-list li {
+            margin-bottom: 10px;
+            font-size: 16px;
+        }
+
+        .sub-info {
+            font-size: 14px;
+            color: #666;
+            margin-top: 15px;
+        }
+
+        /* 一歩の世界セクション */
+        .one-step-world {
+            background-image: url(https://1sauna.jp/wp/wp-content/themes/1sauna-re/dist/images/top_gray_bg_1.png);
+        }
+
+        .concept-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .concept-image {
+            width: 48%;
+        }
+
+        .concept-text {
+            width: 48%;
+        }
+
+        .concept-heading {
+            font-size: 24px;
+            margin-bottom: 20px;
+            position: relative;
+            font-weight: 400;
+        }
+
+        .concept-desc {
+            font-size: 16px;
+            line-height: 1.8;
+        }
+
+        /* オプションセクション */
+        .options-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+        }
+
+        .option-item {
+            width: 31%;
+            margin-bottom: 30px;
+            background: #fff;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            border-radius: 8px;
+            overflow: hidden;
+            transition: 0.3s;
+        }
+
+        .option-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .option-image {
+            height: 200px;
+            overflow: hidden;
+        }
+
+        .option-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: 0.5s;
+        }
+
+        .option-item:hover .option-image img {
+            transform: scale(1.05);
+        }
+
+        .option-content {
+            padding: 20px;
+        }
+
+        .option-name {
+            font-size: 18px;
+            margin-bottom: 10px;
+            font-weight: 400;
+        }
+
+        .option-price {
+            font-size: 16px;
+            color: #666;
+        }
+
+        /* アクセスセクション */
+        .access-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+        }
+
+        .access-info {
+            width: 48%;
+        }
+
+        .access-map {
+            width: 48%;
+            height: 400px;
+        }
+
+        .access-map iframe {
+            width: 100%;
+            height: 100%;
+            border: 0;
+        }
+
+        .access-detail {
+            list-style: none;
+            margin-bottom: 20px;
+        }
+
+        .access-detail li {
+            margin-bottom: 10px;
+            font-size: 16px;
+        }
+
+        /* FAQセクション */
+        .faq-container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .faq-item {
+            margin-bottom: 20px;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 20px;
+        }
+
+        .faq-question {
+            font-size: 18px;
+            margin-bottom: 15px;
+            position: relative;
+            padding-left: 30px;
+            font-weight: 400;
+            cursor: pointer;
+        }
+
+        .faq-question:before {
+            content: 'Q.';
+            position: absolute;
+            left: 0;
+            color: #F7C600;
+        }
+
+        .faq-answer {
+            padding-left: 30px;
+            position: relative;
+            font-size: 16px;
+        }
+
+        .faq-answer:before {
+            content: 'A.';
+            position: absolute;
+            left: 0;
+            color: #666;
+        }
+
+        /* フッター */
+        footer {
+            background: #333;
+            color: #fff;
+            padding: 60px 0 30px;
+        }
+
+        .footer-inner {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 0 30px;
+        }
+
+        .footer-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            margin-bottom: 40px;
+        }
+
+        .footer-logo {
+            width: 30%;
+        }
+
+        .footer-logo > img {
+            width: 30%;
+        }
+
+        .footer-nav {
+            width: 60%;
+            display: flex;
+            flex-wrap: wrap;
+        }
+
+        .footer-nav-group {
+            width: 33.33%;
+            margin-bottom: 20px;
+        }
+
+        .footer-nav-title {
+            font-size: 16px;
+            margin-bottom: 15px;
+            position: relative;
+            padding-bottom: 5px;
+        }
+
+        .footer-nav-title:after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 20px;
+            height: 1px;
+            background: #F7C600;
+        }
+
+        .footer-nav-list {
+            list-style: none;
+        }
+
+        .footer-nav-list li {
+            margin-bottom: 8px;
+        }
+
+        .footer-nav-list li a {
+            font-size: 14px;
+            color: #ccc;
+            transition: 0.3s;
+        }
+
+        .footer-nav-list li a:hover {
+            color: #fff;
+        }
+
+        .copyright {
+            text-align: center;
+            font-size: 12px;
+            color: #999;
+            padding-top: 30px;
+            border-top: 1px solid #444;
+        }
+
+        /* モバイル対応 */
+        @media (max-width: 768px) {
+            /* ヘッダー */
+            header {
+                padding: 15px;
+            }
+            
+            .logo {
+                height: 25px;
+            }
+            
+            /* ハンバーガーメニュー */
+            .menu-toggle {
+                display: block;
+                width: 25px;
+                height: 20px;
+                position: relative;
+                cursor: pointer;
+            }
+            
+            .menu-toggle span {
+                display: block;
+                position: absolute;
+                width: 100%;
+                height: 2px;
+                background: #fff;
+                transition: 0.3s;
+            }
+            
+            .menu-toggle span:nth-child(1) {
+                top: 0;
+            }
+            
+            .menu-toggle span:nth-child(2) {
+                top: 9px;
+            }
+            
+            .menu-toggle span:nth-child(3) {
+                bottom: 0;
+            }
+            
+            nav {
+                position: fixed;
+                top: 0;
+                right: -100%;
+                width: 80%;
+                height: 100vh;
+                background: #333;
+                padding: 80px 30px;
+                transition: 0.5s;
+            }
+            
+            nav.active {
+                right: 0;
+            }
+            
+            nav ul {
+                flex-direction: column;
+            }
+            
+            nav ul li {
+                margin: 0 0 20px 0;
+            }
+            
+            nav ul li a {
+                font-size: 16px;
+                display: block;
+            }
+            
+            /* ヒーローセクション */
+            .vertical-text {
+                font-size: 2rem;
+            }
+            
+            .sub-copy {
+                font-size: 1rem;
+                margin-right: 20px;
+            }
+            
+            /* 基本情報セクション */
+            .info-box {
+                width: 100%;
+            }
+            
+            /* 一歩の世界セクション */
+            .concept-image,
+            .concept-text {
+                width: 100%;
+            }
+            
+            .concept-image {
+                margin-bottom: 30px;
+            }
+            
+            /* オプションセクション */
+            .option-item {
+                width: 100%;
+            }
+            
+            /* アクセスセクション */
+            .access-info,
+            .access-map {
+                width: 100%;
+            }
+            
+            .access-info {
+                margin-bottom: 30px;
+            }
+            
+            /* フッター */
+            .footer-logo,
+            .footer-nav {
+                width: 100%;
+            }
+            
+            .footer-logo {
+                margin-bottom: 30px;
+            }
+            
+            .footer-nav-group {
+                width: 50%;
+            }
+        }
+
+        /* 固定ナビゲーション */
+        .fixed-nav {
+            position: fixed;
+            bottom: 40px;
+            right: 40px;
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .fixed-nav-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 150px;
+            padding: 12px;
+            border-radius: 30px;
+            font-weight: 600;
+            font-size: 14px;
+            letter-spacing: 0.05em;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .reserve-fixed-btn {
+            background: linear-gradient(135deg, #4BB4E6 0%, #3498db 100%);
+            color: white;
+        }
+
+        .reserve-fixed-btn:hover {
+            background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .member-fixed-btn {
+            background: linear-gradient(135deg, #4CAF50 0%, #2E7D32 100%);
+            color: white;
+        }
+
+        .member-fixed-btn:hover {
+            background: linear-gradient(135deg, #2E7D32 0%, #1B5E20 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .fixed-nav-btn i {
+            margin-right: 8px;
+        }
+
+        /* モバイル対応 */
+        @media (max-width: 768px) {
+            /* 固定ナビゲーション */
+            .fixed-nav {
+                bottom: 20px;
+                top: auto;
+                left: 0;
+                width: 100%;
+                flex-direction: row;
+                justify-content: center;
+                gap: 15px;
+                padding: 0 20px;
+            }
+
+            .fixed-nav-btn {
+                width: 48%;
+                max-width: 180px;
+            }
+        }
+        /* SNSセクション */
+        .sns-section {
+            padding: 40px 0;
+            background: #f9f9f9;
+        }
+
+        .sns-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 20px;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .sns-link {
+            display: flex;
+            align-items: center;
+            padding: 12px 24px;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 15px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .sns-link:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
+        }
+
+        .x-link {
+            background: #000;
+            color: white;
+        }
+
+        .instagram-link {
+            background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%);
+            color: white;
+        }
+
+        .line-link {
+            background: #06C755;
+            color: white;
+        }
+
+        .sns-link i, .sns-link img {
+            margin-right: 10px;
+            font-size: 20px;
+        }
+
+        .sns-link span {
+            white-space: nowrap;
+        }
+
+        .line-container {
+            max-width: 1000px;
+            margin: 30px auto 0;
+            padding: 0 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        }
+
+        .line-logo {
+            width: 80px;
+            height: 80px;
+            margin-right: 20px;
+        }
+
+        .line-text {
+            flex: 1;
+        }
+
+        .line-title {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .line-subtitle {
+            font-size: 14px;
+            color: #666;
+        }
+
+        /* モバイル対応 */
+        @media (max-width: 768px) {
+            /* SNSセクション */
+            .sns-container {
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            .sns-link {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .line-container {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .line-logo {
+                margin-right: 0;
+                margin-bottom: 15px;
+            }
+        }
+        /* 施設紹介セクション */
+        .facility {
+            /* background: #f9f9f9; */
+            background-image: url(https://1sauna.jp/wp/wp-content/themes/1sauna-re/dist/images/facility_gray_bg_sp_2.png);
+        }
+
+        .facility-item {
+            margin-bottom: 80px;
+        }
+
+        .facility-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .facility-container.reverse {
+            flex-direction: row-reverse;
+        }
+
+        .facility-image {
+            width: 48%;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 3px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .facility-image img {
+            width: 100%;
+            height: auto;
+            transition: 0.5s;
+        }
+
+        .facility-item:hover .facility-image img {
+            transform: scale(1.03);
+        }
+
+        .facility-content {
+            width: 48%;
+        }
+
+        .facility-heading {
+            font-size: 24px;
+            margin-bottom: 20px;
+            position: relative;
+            font-weight: 400;
+            padding-left: 20px;
+        }
+
+        .facility-heading:before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 4px;
+            height: 24px;
+            background: #F7C600;
+        }
+
+        .facility-desc {
+            font-size: 16px;
+            line-height: 1.8;
+        }
+
+        @media (max-width: 768px) {
+            .facility-image,
+            .facility-content {
+                width: 100%;
+            }
+            
+            .facility-image {
+                margin-bottom: 30px;
+            }
+            
+            .facility-container,
+            .facility-container.reverse {
+                flex-direction: column;
+            }
+            
+            .facility-item {
+                margin-bottom: 60px;
+            }
+        }
+
+        /* ヒーローセクションの修正 */
+        .logo-overlay {
+            position: absolute;
+            top: 60%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 100%;
+            height: 100%;
+            opacity: 0.5; /* 透明度を設定 */
+            z-index: 2;
+        }
+
+        .logo-overlay img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            opacity: 0.7;
+        }
+
+        /* キャッチコピーの位置を調整 */
+        .catch-copy-container {
+            position: absolute;
+            right: 6%; /* 右側の位置を調整 */
+            top: 50%;
+            transform: translateY(-50%);
+            display: flex;
+            flex-direction: row-reverse;
+            z-index: 3; /* ロゴより前面に */
+        }
+
+        /* モバイル対応 */
+        @media (max-width: 768px) {
+            .logo-overlay {
+                width: 350px;
+                height: 350px;
+            }
+            
+            .catch-copy-container {
+                top: 30%;
+                right: 10%;
+            }
+        }
+
+
+
+    </style>
+</head>
+<body>
+    <!-- 固定ナビゲーション -->
+    <div class="fixed-nav">
+        <a href="#" class="fixed-nav-btn reserve-fixed-btn"><i class="fa-solid fa-calendar-check"></i> 予約する</a>
+        <a href="#" class="fixed-nav-btn member-fixed-btn"><i class="fa-solid fa-user-plus"></i> 会員登録</a>
+    </div>
+    <!-- ヘッダー -->
+    <header>
+        <div class="logo">
+            <a href="#"><img src="litorito_logo.png" alt="LITORITO"></a>
+        </div>
+        <div class="menu-toggle">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+        <nav>
+            <ul>
+                <li><a href="#basic-info">基本情報</a></li>
+                <li><a href="#one-step-world">一歩の世界</a></li>
+                <li><a href="#facility">施設紹介</a></li>
+                <li><a href="#access">アクセス</a></li>
+                <li><a href="#faq">よくある質問</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- ヒーローセクション -->
+    <!-- <section class="hero">
+        <div class="hero-image"></div>
+        <div class="hero-overlay"></div>
+        <div class="catch-copy-container">
+            <h1 class="vertical-text">大都会の中の<br>小さなリトリート</h1>
+            <p class="vertical-text sub-copy">一歩の世界で完結する<br>究極のサウナ体験</p>
+        </div>
+    </section> -->
+    
+    <!-- ヒーローセクション -->
+    <section class="hero">
+        <div class="hero-image"></div>
+        <div class="hero-overlay"></div>
+        <div class="logo-overlay">
+            <img src="litorito_touka.png" alt="LITORITO">
+        </div>
+        <div class="catch-copy-container">
+            <h1 class="vertical-text">大都会の中の<br>小さなリトリート</h1>
+            <p class="vertical-text sub-copy">一歩の世界で完結する<br>究極のサウナ体験</p>
+        </div>
+    </section>
+
+
+    <!-- 基本情報セクション -->
+    <section class="basic-info" id="basic-info">
+        <div class="section-inner">
+            <h2 class="section-title">基本情報</h2>
+            <div class="info-container">
+                <div class="info-box">
+                    <h3 class="info-heading">利用料金</h3>
+                    <ul class="price-list">
+                        <li>70分：3,800円（税込）</li>
+                        <li>90分：4,800円（税込）</li>
+                        <li>当日30分延長：1,500円（税込）</li>
+                    </ul>
+                    <p class="sub-info">※タオル、アメニティは全て完備しておりますので手ぶらでご利用いただけます。</p>
+                </div>
+                <div class="info-box">
+                    <h3 class="info-heading">営業時間</h3>
+                    <ul class="price-list">
+                        <li>13:00～23:30 [平日]</li>
+                        <li>11:00～23:30 [土日祝]</li>
+                    </ul>
+                    <p class="sub-info">※定休日：毎週火曜日<br>※事前予約制となっております。</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 一歩の世界セクション -->
+    <section class="one-step-world" id="one-step-world">
+        <div class="section-inner">
+            <h2 class="section-title">一歩の世界</h2>
+            <div class="concept-container">
+                <div class="concept-image">
+                    <img src="https://litorito.jp/wp-content/uploads/2025/03/a039506ca5b2d8a6fbecda71d5926c84-2000x1200.jpg" alt="一歩の世界">
+                </div>
+                <div class="concept-text">
+                    <h3 class="concept-heading">一歩で完結する究極のサウナ</h3>
+                    <p class="concept-desc">空間はラグジュエリーな装飾も贅沢なスペースも全て削ぎ落とされたとても狭い世界。<br><br>テーマは「サウナ→水風呂→休憩」のみを追求し「一歩の世界」で移動完結出来るサウナとして作られています。<br><br>サウナ好きが作るサウナ好きの為の究極の個室SAUNA、それがLITORITOです。</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- オプションセクション -->
+    <!-- <section class="options" id="options">
+        <div class="section-inner">
+            <h2 class="section-title">オプション</h2>
+            <div class="options-container">
+                <div class="option-item">
+                    <div class="option-image">
+                        <img src="https://images.unsplash.com/photo-1591458406571-7d033295fca7?q=80&w=2070&auto=format&fit=crop" alt="炭酸の水風呂">
+                    </div>
+                    <div class="option-content">
+                        <h3 class="option-name">Sparkling water (炭酸の水風呂)</h3>
+                        <p class="option-price">1,000円</p>
+                    </div>
+                </div>
+                <div class="option-item">
+                    <div class="option-image">
+                        <img src="https://images.unsplash.com/photo-1564419320461-6870880221ad?q=80&w=2070&auto=format&fit=crop" alt="天然水">
+                    </div>
+                    <div class="option-content">
+                        <h3 class="option-name">天然水</h3>
+                        <p class="option-price">120円</p>
+                    </div>
+                </div>
+                <div class="option-item">
+                    <div class="option-image">
+                        <img src="https://images.unsplash.com/photo-1551818255-e6e10975bc17?q=80&w=2073&auto=format&fit=crop" alt="イオンウォーター">
+                    </div>
+                    <div class="option-content">
+                        <h3 class="option-name">イオンウォーター</h3>
+                        <p class="option-price">200円</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section> -->
+
+    <!-- 施設紹介セクション -->
+    <section class="facility" id="facility">
+        <div class="section-inner">
+            <h2 class="section-title">施設紹介</h2>
+            
+            <!-- セルフロウリュ -->
+            <div class="facility-item">
+                <div class="facility-container">
+                    <div class="facility-image">
+                        <img src="selfrouryu.png" alt="セルフロウリュ">
+                    </div>
+                    <div class="facility-content">
+                        <h3 class="facility-heading">セルフロウリュ</h3>
+                        <p class="facility-desc">好みの温度と湿度をいつでも自分自身で調整できる「セルフロウリュ」を全室に完備。<br><br>誰に気兼ねすることなく、お湯をかけて蒸気を発生させ、湿度と体感温度を高めることができます。<br><br>一般的なサウナでは難しい「横になる」スタイルも楽しめるのも、プライベート空間ならではの魅力です。</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 水風呂 -->
+            <div class="facility-item">
+                <div class="facility-container reverse">
+                    <div class="facility-image">
+                        <img src="mizuburo.png" alt="水風呂">
+                    </div>
+                    <div class="facility-content">
+                        <h3 class="facility-heading">水風呂</h3>
+                        <p class="facility-desc">「一歩の世界」を実現するために厳選された水風呂は、上質な機能性と美しさを兼ね備えています。<br><br>木の温もりを感じる注ぎ口から清らかな水が流れ落ち、サウナ後の熱した身体を優しくクールダウン。<br><br>サウナ室からたったの一歩で移動でき、完璧なサウナサイクルを効率的に実現します。</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- ととのい椅子 -->
+            <div class="facility-item">
+                <div class="facility-container">
+                    <div class="facility-image">
+                        <img src="totonoichair.png" alt="ととのい椅子">
+                    </div>
+                    <div class="facility-content">
+                        <h3 class="facility-heading">ととのい椅子</h3>
+                        <p class="facility-desc">サウナと水風呂を行き来した後の「ととのい」タイムに最適な、厳選されたリラックスチェアを完備。<br><br>快適な角度設計と体をしっかり支える構造により、深いリラクゼーションを促進。誰にも邪魔されない完全プライベート空間で、深い「ととのい」の境地へと導きます。<br><br>白と黒の2種類から選べるので、その日の気分に合わせてお選びください。</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- パウダールーム -->
+            <div class="facility-item">
+                <div class="facility-container reverse">
+                    <div class="facility-image">
+                        <img src="powderroom.png" alt="パウダールーム">
+                    </div>
+                    <div class="facility-content">
+                        <h3 class="facility-heading">パウダールーム</h3>
+                        <p class="facility-desc">サウナ利用後のリフレッシュに最適な、清潔感あふれるパウダールームを完備。<br><br>大きな鏡と明るい照明で身だしなみを整えやすく、ドライヤーや基礎的なアメニティも完備。<br><br>プライベート空間なので、周りを気にせずゆったりとご利用いただけます。手ぶらでお越しいただいても快適にお過ごしいただけるよう、必要なものは全て揃えています。</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- アクセスセクション -->
+    <section class="access" id="access">
+        <div class="section-inner">
+            <h2 class="section-title">アクセス</h2>
+            <div class="access-container">
+                <div class="access-info">
+                    <h3 class="info-heading">アクセス情報</h3>
+                    <ul class="access-detail">
+                        <li>〒107-0052 東京都港区赤坂6-3-15-6F</li>
+                        <li>電話：03-6807-4946</li>
+                        <li>Eメール：info@litorito.jp</li>
+                    </ul>
+                    <h3 class="info-heading">最寄り駅</h3>
+                    <ul class="access-detail">
+                        <li>東京メトロ千代田線 赤坂駅 徒歩1分</li>
+                        <li>東京メトロ銀座線・南北線 溜池山王 徒歩5分</li>
+                        <li>東京メトロ銀座線・丸ノ内線 赤坂見附 徒歩5分</li>
+                    </ul>
+                </div>
+                <div class="access-map">
+                    <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3241.5511966360213!2d139.7349214!3d35.673839!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x60188b85397d8749%3A0xca1e37a10c7c33!2z44CSMTAzLTAwMjcg5p2x5Lqs6YO95Lit5aSu5Yy65Lit5aSu77yT5LiB55uu77yR77yT4oiS77yT!5e0!3m2!1sja!2sjp!4v1671533376992!5m2!1sja!2sjp" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FAQセクション -->
+    <section class="faq" id="faq">
+        <div class="section-inner">
+            <h2 class="section-title">よくある質問</h2>
+            <div class="faq-container">
+                <div class="faq-item">
+                    <h3 class="faq-question">サウナ初心者でも大丈夫ですか？</h3>
+                    <div class="faq-answer">
+                        <p>もちろん大丈夫です。はじめての方でも快適にご利用いただけます。サウナの入り方が分からない方や心配がある方は、ご予約時に備考欄でお知らせいただくかチェックイン前にスタッフへお声がけください。</p>
+                    </div>
+                </div>
+                <div class="faq-item">
+                    <h3 class="faq-question">持っていくものはありますか？</h3>
+                    <div class="faq-answer">
+                        <p>バスタオル、シャンプー類、ドライヤーなど各個室にございます。ご自身のこだわりのアメニティや追加タオル、サウナハットなどご持参いただきお楽しみください。下着・靴下の替えはあったほうがリフレッシュできます。</p>
+                    </div>
+                </div>
+                <div class="faq-item">
+                    <h3 class="faq-question">キャンセル料金はかかりますか？</h3>
+                    <div class="faq-answer">
+                        <p>ご予約前日のお昼１２：００までは無料キャンセル可能です。１２：００以降のキャンセルはご利用料金の１００%を頂戴いたします。キャンセル手続きは予約サイトのマイページからお願いいたします。</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SNSセクション -->
+    <section class="sns-section">
+        <div class="section-inner">
+            <div class="sns-container">
+                <a href="#" class="sns-link x-link">
+                    <i class="fab fa-x-twitter"></i>
+                    <span>X</span>
+                </a>
+                <a href="#" class="sns-link instagram-link">
+                    <i class="fab fa-instagram"></i>
+                    <span>Instagram</span>
+                </a>
+                <a href="#" class="sns-link line-link">
+                    <i class="fab fa-line"></i>
+                    <span>LINE</span>
+                </a>
+            </div>
+            
+            <div class="line-container">
+                <div class="line-logo">
+                    <img src="https://cdn.svgporn.com/logos/line.svg" alt="LINE" width="80" height="80">
+                </div>
+                <div class="line-text">
+                    <h4 class="line-title">LINE公式アカウント</h4>
+                    <p class="line-subtitle">お店と友達になろう！</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- フッター -->
+    <footer>
+        <div class="footer-inner">
+            <div class="footer-container">
+                <div class="footer-logo">
+                    <img src="litorito_logo.png.png" alt="LITORITO">
+                    <p style="margin-top: 15px; font-size: 14px; color: #ccc;">大都会の中の小さなリトリート。<br>一歩の世界で完結する究極のサウナ体験。</p>
+                </div>
+                <div class="footer-nav">
+                    <div class="footer-nav-group">
+                        <h3 class="footer-nav-title">LITORITOについて</h3>
+                        <ul class="footer-nav-list">
+                            <li><a href="#basic-info">基本情報</a></li>
+                            <li><a href="#one-step-world">一歩の世界</a></li>
+                            <li><a href="#options">オプション</a></li>
+                        </ul>
+                    </div>
+                    <div class="footer-nav-group">
+                        <h3 class="footer-nav-title">施設案内</h3>
+                        <ul class="footer-nav-list">
+                            <li><a href="#access">アクセス</a></li>
+                            <li><a href="#faq">よくある質問</a></li>
+                            <li><a href="#">お知らせ</a></li>
+                        </ul>
+                    </div>
+                    <div class="footer-nav-group">
+                        <h3 class="footer-nav-title">お問い合わせ</h3>
+                        <ul class="footer-nav-list">
+                            <li><a href="#">ご予約</a></li>
+                            <li><a href="#">お問い合わせ</a></li>
+                            <li><a href="#">採用情報</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <p class="copyright">© 2025 LITORITO All Rights Reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        // ハンバーガーメニュー
+        document.querySelector('.menu-toggle').addEventListener('click', function() {
+            this.classList.toggle('active');
+            document.querySelector('nav').classList.toggle('active');
+        });
+
+        // スムーススクロール
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    window.scrollTo({
+                        top: target.offsetTop - 80,
+                        behavior: 'smooth'
+                    });
+                }
+                // モバイルメニューを閉じる
+                document.querySelector('.menu-toggle').classList.remove('active');
+                document.querySelector('nav').classList.remove('active');
+            });
+        });
+
+        // スクロール時のヘッダー背景変更
+        window.addEventListener('scroll', function() {
+            if (window.scrollY > 50) {
+                document.querySelector('header').style.background = 'rgba(51, 51, 51, 0.9)';
+            } else {
+                document.querySelector('header').style.background = 'transparent';
+            }
+        });
+    </script>
+</body>
+</html>
