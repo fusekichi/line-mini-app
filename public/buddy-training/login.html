@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>バディトレ予約システム</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css">
+    <style>
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+        }
+        .modal.active {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: 80px repeat(7, 1fr);
+            gap: 1px;
+            background-color: #e5e7eb;
+        }
+        .calendar-cell {
+            background-color: white;
+            min-height: 60px;
+            padding: 4px;
+            position: relative;
+        }
+        .lesson-slot {
+            background-color: #3b82f6;
+            color: white;
+            padding: 2px 4px;
+            margin: 1px 0;
+            border-radius: 4px;
+            font-size: 12px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        .lesson-slot:hover {
+            background-color: #2563eb;
+        }
+        .sidebar {
+            transform: translateX(-100%);
+            transition: transform 0.3s ease;
+        }
+        .sidebar.active {
+            transform: translateX(0);
+        }
+        @media (min-width: 768px) {
+            .sidebar {
+                transform: translateX(0);
+            }
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <!-- Login Screen -->
+    <div id="loginScreen" class="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-500 to-purple-600">
+        <div class="max-w-md w-full space-y-8 p-8">
+            <div class="text-center">
+                <h2 class="text-4xl font-bold text-white mb-2">バディトレ</h2>
+                <p class="text-blue-100">予約システムログイン</p>
+            </div>
+            <div class="bg-white rounded-xl shadow-2xl p-8 space-y-6">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">メールアドレス</label>
+                    <input type="email" id="loginEmail" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="example@email.com">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">パスワード</label>
+                    <input type="password" id="loginPassword" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="パスワード">
+                </div>
+                <button onclick="login()" class="w-full bg-blue-500 text-white py-3 rounded-lg font-semibold hover:bg-blue-600 transition duration-200">
+                    ログイン
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Global state
+        let currentUser = {
+            name: '田中太郎',
+            email: 'tanaka@example.com',
+            plan: 'ベーシックプラン',
+            tickets: 5
+        };
+
+        // Show/hide functions
+        function showPage(pageId) {
+            // Hide all pages
+            document.querySelectorAll('#mainApp > main > div').forEach(page => {
+                page.classList.add('hidden');
+            });
+            
+            // Show selected page
+            document.getElementById(pageId === 'home' ? 'homePage' : pageId + 'Page').classList.remove('hidden');
+            
+            // Update active nav
+            document.querySelectorAll('.nav-link').forEach(link => {
+                link.classList.remove('bg-blue-50', 'text-blue-600');
+                link.classList.add('text-gray-700');
+            });
+            
+            // Close sidebar on mobile
+            if (window.innerWidth < 768) {
+                document.getElementById('sidebar').classList.remove('active');
+            }
+        }
+
+        function toggleSidebar() {
+            document.getElementById('sidebar').classList.toggle('active');
+        }
+
+        function login() {
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+            
+            if (email && password) {
+                window.location.href='/buddy-training/top.html'
+            }
+        }
+
+        function showModal(modalId) {
+            document.getElementById(modalId).classList.add('active');
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.remove('active');
+        }
+
+        function showReservationModal(title, datetime) {
+            document.getElementById('reservationTitle').textContent = title;
+            document.getElementById('reservationDateTime').textContent = datetime;
+            showModal('reservationModal');
+        }
+
+        function showCancelModal(title, datetime) {
+            showModal('cancelModal');
+        }
+
+        function showPurchaseModal(title, price, description) {
+            document.getElementById('purchaseTitle').textContent = title;
+            document.getElementById('purchasePrice').textContent = price;
+            document.getElementById('purchaseDescription').textContent = description;
+            showModal('purchaseModal');
+        }
+
+        function confirmReservation() {
+            closeModal('reservationModal');
+            alert('予約が完了しました！');
+            // Update ticket count
+            currentUser.tickets -= 1;
+            updateTicketDisplay();
+        }
+
+        function confirmCancel() {
+            closeModal('cancelModal');
+            showModal('cancelConfirmationModal');
+        }
+
+        function confirmPurchase() {
+            closeModal('purchaseModal');
+            const title = document.getElementById('purchaseTitle').textContent;
+            if (title.includes('4回')) {
+                currentUser.tickets += 4;
+            } else {
+                currentUser.tickets += 1;
+            }
+            updateTicketDisplay();
+            alert('チケットを購入しました！');
+        }
+
+        function updateTicketDisplay() {
+            document.getElementById('ticketCount').textContent = `チケット残り: ${currentUser.tickets}枚`;
+        }
+
+        function setCalendarView(view) {
+            // Update active button
+            document.querySelectorAll('.bg-gray-100 button').forEach(btn => {
+                btn.classList.remove('bg-white', 'rounded-md', 'shadow-sm');
+                btn.classList.add('hover:bg-white', 'hover:rounded-md');
+            });
+            
+            event.target.classList.add('bg-white', 'rounded-md', 'shadow-sm');
+            event.target.classList.remove('hover:bg-white', 'hover:rounded-md');
+        }
+
+        function previousWeek() {
+            // Calendar navigation logic would go here
+            console.log('Previous week');
+        }
+
+        function nextWeek() {
+            // Calendar navigation logic would go here
+            console.log('Next week');
+        }
+
+        // Close sidebar when clicking outside
+        document.addEventListener('click', function(e) {
+            const sidebar = document.getElementById('sidebar');
+            const sidebarButton = document.querySelector('[onclick="toggleSidebar()"]');
+            
+            if (!sidebar.contains(e.target) && !sidebarButton.contains(e.target)) {
+                if (window.innerWidth < 768) {
+                    sidebar.classList.remove('active');
+                }
+            }
+        });
+
+        // Close modals when clicking outside
+        document.querySelectorAll('.modal').forEach(modal => {
+            modal.addEventListener('click', function(e) {
+                if (e.target === modal) {
+                    modal.classList.remove('active');
+                }
+            });
+        });
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            // Set initial values
+            updateTicketDisplay();
+        });
+    </script>
+</body>
+</html>

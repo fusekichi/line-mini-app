@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>バディトレ予約システム</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css">
+    <style>
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+        }
+        .modal.active {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: 80px repeat(7, 1fr);
+            gap: 1px;
+            background-color: #e5e7eb;
+        }
+        .calendar-cell {
+            background-color: white;
+            min-height: 60px;
+            padding: 4px;
+            position: relative;
+        }
+        .lesson-slot {
+            background-color: #3b82f6;
+            color: white;
+            padding: 2px 4px;
+            margin: 1px 0;
+            border-radius: 4px;
+            font-size: 12px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        .lesson-slot:hover {
+            background-color: #2563eb;
+        }
+        .sidebar {
+            transform: translateX(-100%);
+            transition: transform 0.3s ease;
+        }
+        .sidebar.active {
+            transform: translateX(0);
+        }
+        @media (min-width: 768px) {
+            .sidebar {
+                transform: translateX(0);
+            }
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <!-- Main Application -->
+    <div id="mainApp">
+        <!-- Header -->
+        <header class="bg-white shadow-sm border-b">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex justify-between items-center h-16">
+                    <div class="flex items-center">
+                        <button class="md:hidden p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100" onclick="toggleSidebar()">
+                            <i class="fas fa-bars"></i>
+                        </button>
+                        <h1 class="text-2xl font-bold text-blue-600 cursor-pointer ml-2 md:ml-0" onclick="showPage('home')">バディトレ</h1>
+                    </div>
+                    <div class="flex items-center space-x-4">
+                        <div class="flex items-center space-x-2 bg-blue-50 px-3 py-1 rounded-full cursor-pointer" onclick="showPage('user-details')">
+                            <span class="text-sm font-medium text-blue-600" id="userPlan">ベーシックプラン</span>
+                            <i class="fas fa-chevron-down text-blue-600"></i>
+                        </div>
+                        <span class="text-sm text-gray-700" id="userName">田中太郎</span>
+                        <div class="bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm font-medium" id="ticketCount">
+                            チケット残り: 5枚
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <div class="flex">
+            <!-- Sidebar -->
+            <aside class="sidebar fixed inset-y-0 left-0 z-50 w-64 bg-white shadow-lg md:static md:z-auto" id="sidebar">
+                <div class="flex flex-col h-full pt-16 md:pt-0">
+                    <nav class="flex-1 px-4 py-6 space-y-2">
+                        <a href="./top.html" class="nav-link flex items-center px-4 py-2 text-gray-700 rounded-lg hover:bg-blue-50 hover:text-blue-600 transition duration-200">
+                            <i class="fas fa-calendar-alt mr-3"></i>
+                            予約カレンダー
+                        </a>
+                        <a href="./history.html" class="nav-link flex items-center px-4 py-2 text-gray-700 rounded-lg hover:bg-blue-50 hover:text-blue-600 transition duration-200">
+                            <i class="fas fa-history mr-3"></i>
+                            予約履歴
+                        </a>
+                        <a href="./tickets.html" class="nav-link flex items-center px-4 py-2 text-gray-700 rounded-lg hover:bg-blue-50 hover:text-blue-600 transition duration-200">
+                            <i class="fas fa-ticket-alt mr-3"></i>
+                            チケット追加購入
+                        </a>
+                        <a href="./user.html" class="nav-link flex items-center px-4 py-2 text-gray-700 rounded-lg hover:bg-blue-50 hover:text-blue-600 transition duration-200">
+                            <i class="fas fa-user mr-3"></i>
+                            ユーザー詳細
+                        </a>
+                    </nav>
+                </div>
+            </aside>
+
+            <!-- Main Content -->
+            <main class="flex-1 md:ml-0">
+                <!-- Home Page -->
+                <div id="homePage" class="p-6">
+                    <div class="max-w-7xl mx-auto">
+                        <div class="mb-6">
+                            <h2 class="text-2xl font-bold text-gray-900 mb-4">レッスン予約</h2>
+                            
+                            <!-- Controls -->
+                            <div class="flex flex-col md:flex-row justify-between items-start md:items-center space-y-4 md:space-y-0 mb-6">
+                                <div class="flex items-center space-x-4">
+                                    <select id="storeSelect" class="px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                        <option value="ebisu">恵比寿店</option>
+                                        <option value="shibuya">渋谷SLOTH店</option>
+                                        <option value="roppongi">六本木店</option>
+                                        <option value="hongo">本郷三丁目店</option>
+                                        <option value="togoshi">戸越公園店</option>
+                                    </select>
+                                    <div class="flex bg-gray-100 rounded-lg p-1">
+                                        <button class="px-4 py-2 text-sm font-medium text-gray-700 bg-white rounded-md shadow-sm" onclick="setCalendarView('day')">日</button>
+                                        <button class="px-4 py-2 text-sm font-medium text-gray-700 hover:bg-white hover:rounded-md" onclick="setCalendarView('week')">週</button>
+                                    </div>
+                                </div>
+                                <div class="flex items-center space-x-2">
+                                    <button class="p-2 text-gray-400 hover:text-gray-600" onclick="previousWeek()">
+                                        <i class="fas fa-chevron-left"></i>
+                                    </button>
+                                    <span class="text-lg font-medium" id="currentDate">2024年1月15日 - 1月21日</span>
+                                    <button class="p-2 text-gray-400 hover:text-gray-600" onclick="nextWeek()">
+                                        <i class="fas fa-chevron-right"></i>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Calendar -->
+                            <div class="bg-white rounded-lg shadow overflow-hidden">
+                                <div class="calendar-grid">
+                                    <!-- Time labels -->
+                                    <div class="calendar-cell bg-gray-50 flex items-center justify-center font-medium text-gray-700"></div>
+                                    <div class="calendar-cell bg-gray-50 flex items-center justify-center font-medium text-gray-700">月</div>
+                                    <div class="calendar-cell bg-gray-50 flex items-center justify-center font-medium text-gray-700">火</div>
+                                    <div class="calendar-cell bg-gray-50 flex items-center justify-center font-medium text-gray-700">水</div>
+                                    <div class="calendar-cell bg-gray-50 flex items-center justify-center font-medium text-gray-700">木</div>
+                                    <div class="calendar-cell bg-gray-50 flex items-center justify-center font-medium text-gray-700">金</div>
+                                    <div class="calendar-cell bg-gray-50 flex items-center justify-center font-medium text-gray-700">土</div>
+                                    <div class="calendar-cell bg-gray-50 flex items-center justify-center font-medium text-gray-700">日</div>
+                                    
+                                    <!-- 10:00 row -->
+                                    <div class="calendar-cell bg-gray-50 flex items-center justify-center text-sm text-gray-600">10:00</div>
+                                    <div class="calendar-cell"></div>
+                                    <div class="calendar-cell">
+                                        <div class="lesson-slot" onclick="showReservationModal('パーソナルトレーニング', '1月16日 10:00-11:00')">
+                                            パーソナル
+                                        </div>
+                                    </div>
+                                    <div class="calendar-cell"></div>
+                                    <div class="calendar-cell">
+                                        <div class="lesson-slot" onclick="showReservationModal('グループレッスン', '1月18日 10:00-11:00')">
+                                            グループ
+                                        </div>
+                                    </div>
+                                    <div class="calendar-cell"></div>
+                                    <div class="calendar-cell"></div>
+                                    <div class="calendar-cell"></div>
+
+                                    <!-- 11:00 row -->
+                                    <div class="calendar-cell bg-gray-50 flex items-center justify-center text-sm text-gray-600">11:00</div>
+                                    <div class="calendar-cell">
+                                        <div class="lesson-slot" onclick="showReservationModal('ヨガクラス', '1月15日 11:00-12:00')">
+                                            ヨガ
+                                        </div>
+                                    </div>
+                                    <div class="calendar-cell"></div>
+                                    <div class="calendar-cell">
+                                        <div class="lesson-slot" onclick="showReservationModal('筋力トレーニング', '1月17日 11:00-12:00')">
+                                            筋力
+                                        </div>
+                                    </div>
+                                    <div class="calendar-cell"></div>
+                                    <div class="calendar-cell">
+                                        <div class="lesson-slot" onclick="showReservationModal('パーソナルトレーニング', '1月19日 11:00-12:00')">
+                                            パーソナル
+                                        </div>
+                                    </div>
+                                    <div class="calendar-cell"></div>
+                                    <div class="calendar-cell"></div>
+
+                                    <!-- Continue with more time slots... -->
+                                    <div class="calendar-cell bg-gray-50 flex items-center justify-center text-sm text-gray-600">19:00</div>
+                                    <div class="calendar-cell"></div>
+                                    <div class="calendar-cell">
+                                        <div class="lesson-slot" onclick="showReservationModal('夜ヨガ', '1月16日 19:00-20:00')">
+                                            夜ヨガ
+                                        </div>
+                                    </div>
+                                    <div class="calendar-cell"></div>
+                                    <div class="calendar-cell">
+                                        <div class="lesson-slot" onclick="showReservationModal('HIIT', '1月18日 19:00-20:00')">
+                                            HIIT
+                                        </div>
+                                    </div>
+                                    <div class="calendar-cell"></div>
+                                    <div class="calendar-cell"></div>
+                                    <div class="calendar-cell"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- Reservation Modal -->
+    <div id="reservationModal" class="modal">
+        <div class="bg-white rounded-lg shadow-xl p-6 max-w-md w-full mx-4">
+            <h3 class="text-lg font-semibold text-gray-900 mb-4">ご予約内容</h3>
+            <div class="space-y-4">
+                <div>
+                    <p class="text-sm text-gray-600 mb-1">レッスン内容</p>
+                    <p class="font-medium" id="reservationTitle">パーソナルトレーニング</p>
+                </div>
+                <div>
+                    <p class="text-sm text-gray-600 mb-1">予約日時</p>
+                    <p class="font-medium" id="reservationDateTime">2024年1月16日 10:00-11:00</p>
+                </div>
+                <div>
+                    <label class="block text-sm text-gray-600 mb-1">予約人数</label>
+                    <input type="number" value="1" min="1" max="4" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                </div>
+                <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-3">
+                    <p class="text-sm text-yellow-800">
+                        <i class="fas fa-exclamation-triangle mr-2"></i>
+                        キャンセルポリシー: キャンセルは1時間前まで可能です。無断キャンセルの場合、チケットの返却はございません。
+                    </p>
+                </div>
+                <div class="flex space-x-3">
+                    <button class="flex-1 bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-600 transition duration-200" onclick="confirmReservation()">
+                        予約する
+                    </button>
+                    <button class="flex-1 bg-gray-300 text-gray-700 py-2 rounded-lg hover:bg-gray-400 transition duration-200" onclick="closeModal('reservationModal')">
+                        キャンセル
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Global state
+        let currentUser = {
+            name: '田中太郎',
+            email: 'tanaka@example.com',
+            plan: 'ベーシックプラン',
+            tickets: 5
+        };
+
+        // Show/hide functions
+        function showPage(pageId) {
+            // Hide all pages
+            document.querySelectorAll('#mainApp > main > div').forEach(page => {
+                page.classList.add('hidden');
+            });
+            
+            // Show selected page
+            document.getElementById(pageId === 'home' ? 'homePage' : pageId + 'Page').classList.remove('hidden');
+            
+            // Update active nav
+            document.querySelectorAll('.nav-link').forEach(link => {
+                link.classList.remove('bg-blue-50', 'text-blue-600');
+                link.classList.add('text-gray-700');
+            });
+            
+            // Close sidebar on mobile
+            if (window.innerWidth < 768) {
+                document.getElementById('sidebar').classList.remove('active');
+            }
+        }
+
+        function toggleSidebar() {
+            document.getElementById('sidebar').classList.toggle('active');
+        }
+
+        function login() {
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+            
+            if (email && password) {
+                document.getElementById('loginScreen').classList.add('hidden');
+                document.getElementById('mainApp').classList.remove('hidden');
+                showPage('home');
+            }
+        }
+
+        function showModal(modalId) {
+            document.getElementById(modalId).classList.add('active');
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.remove('active');
+        }
+
+        function showReservationModal(title, datetime) {
+            document.getElementById('reservationTitle').textContent = title;
+            document.getElementById('reservationDateTime').textContent = datetime;
+            showModal('reservationModal');
+        }
+
+        function showCancelModal(title, datetime) {
+            showModal('cancelModal');
+        }
+
+        function showPurchaseModal(title, price, description) {
+            document.getElementById('purchaseTitle').textContent = title;
+            document.getElementById('purchasePrice').textContent = price;
+            document.getElementById('purchaseDescription').textContent = description;
+            showModal('purchaseModal');
+        }
+
+        function confirmReservation() {
+            closeModal('reservationModal');
+            alert('予約が完了しました！');
+            // Update ticket count
+            currentUser.tickets -= 1;
+            updateTicketDisplay();
+        }
+
+        function confirmCancel() {
+            closeModal('cancelModal');
+            showModal('cancelConfirmationModal');
+        }
+
+        function confirmPurchase() {
+            closeModal('purchaseModal');
+            const title = document.getElementById('purchaseTitle').textContent;
+            if (title.includes('4回')) {
+                currentUser.tickets += 4;
+            } else {
+                currentUser.tickets += 1;
+            }
+            updateTicketDisplay();
+            alert('チケットを購入しました！');
+        }
+
+        function updateTicketDisplay() {
+            document.getElementById('ticketCount').textContent = `チケット残り: ${currentUser.tickets}枚`;
+        }
+
+        function setCalendarView(view) {
+            // Update active button
+            document.querySelectorAll('.bg-gray-100 button').forEach(btn => {
+                btn.classList.remove('bg-white', 'rounded-md', 'shadow-sm');
+                btn.classList.add('hover:bg-white', 'hover:rounded-md');
+            });
+            
+            event.target.classList.add('bg-white', 'rounded-md', 'shadow-sm');
+            event.target.classList.remove('hover:bg-white', 'hover:rounded-md');
+        }
+
+        function previousWeek() {
+            // Calendar navigation logic would go here
+            console.log('Previous week');
+        }
+
+        function nextWeek() {
+            // Calendar navigation logic would go here
+            console.log('Next week');
+        }
+
+        // Close sidebar when clicking outside
+        document.addEventListener('click', function(e) {
+            const sidebar = document.getElementById('sidebar');
+            const sidebarButton = document.querySelector('[onclick="toggleSidebar()"]');
+            
+            if (!sidebar.contains(e.target) && !sidebarButton.contains(e.target)) {
+                if (window.innerWidth < 768) {
+                    sidebar.classList.remove('active');
+                }
+            }
+        });
+
+        // Close modals when clicking outside
+        document.querySelectorAll('.modal').forEach(modal => {
+            modal.addEventListener('click', function(e) {
+                if (e.target === modal) {
+                    modal.classList.remove('active');
+                }
+            });
+        });
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            // Set initial values
+            updateTicketDisplay();
+        });
+    </script>
+</body>
+</html>
