@@ -1,13 +1,12 @@
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient } from '@prisma/client'
 
-// グローバル変数の型拡張
-declare global {
-  var prisma: PrismaClient | undefined;
-}
+// グローバルな型定義（TypeScript用）
+const globalForPrisma = global as unknown as { prisma: PrismaClient }
 
-// 開発環境でホットリロード時に複数のPrismaインスタンスが作成されるのを防ぐ
-const prisma = global.prisma || new PrismaClient();
+// PrismaClientのインスタンスを作成
+export const prisma = globalForPrisma.prisma || new PrismaClient()
 
-if (process.env.NODE_ENV !== 'production') global.prisma = prisma;
+if (process.env.NODE_ENV !== 'production') globalForPrisma.prisma = prisma
 
-export default prisma;
+// デフォルトエクスポートを追加
+export default prisma
